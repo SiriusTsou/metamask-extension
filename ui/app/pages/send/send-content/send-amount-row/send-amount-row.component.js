@@ -1,5 +1,6 @@
 import React, { Component } from 'react'
 import PropTypes from 'prop-types'
+import debounce from 'lodash.debounce'
 import SendRowWrapper from '../send-row-wrapper'
 import AmountMaxButton from './amount-max-button'
 import UserPreferencedCurrencyInput from '../../../../components/app/user-preferenced-currency-input'
@@ -29,6 +30,11 @@ export default class SendAmountRow extends Component {
 
   static contextTypes = {
     t: PropTypes.func,
+  }
+
+  constructor (props) {
+    super(props)
+    this.updateGas = debounce(this.updateGas, 500)
   }
 
   validateAmount (amount) {
@@ -89,10 +95,10 @@ export default class SendAmountRow extends Component {
 
     return (
       <Component
-        onChange={newAmount => this.validateAmount(newAmount)}
-        onBlur={newAmount => {
+        onChange={newAmount => {
           this.updateGas(newAmount)
           this.updateAmount(newAmount)
+          this.validateAmount(newAmount)
         }}
         error={inError}
         value={amount}

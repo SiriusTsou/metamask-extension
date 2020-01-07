@@ -113,10 +113,16 @@ export default class ConfirmTransactionBase extends Component {
       clearConfirmTransaction,
       nextNonce,
       customNonceValue,
+      toAddress,
+      tryReverseResolveAddress,
     } = this.props
     const { transactionStatus: prevTxStatus } = prevProps
     const statusUpdated = transactionStatus !== prevTxStatus
     const txDroppedOrConfirmed = transactionStatus === DROPPED_STATUS || transactionStatus === CONFIRMED_STATUS
+
+    if (!prevProps.toAddress && toAddress) {
+      tryReverseResolveAddress(toAddress)
+    }
 
     if (nextNonce !== prevProps.nextNonce || customNonceValue !== prevProps.customNonceValue) {
       if (customNonceValue > nextNonce) {
@@ -608,7 +614,9 @@ export default class ConfirmTransactionBase extends Component {
     }
 
     getNextNonce()
-    tryReverseResolveAddress(toAddress)
+    if (toAddress) {
+      tryReverseResolveAddress(toAddress)
+    }
   }
 
   componentWillUnmount () {
